@@ -29,17 +29,17 @@ PAGES = 0
 
 
 class MirrorStatus:
-    STATUS_UPLOADING = "Upload"
-    STATUS_DOWNLOADING = "Download"
-    STATUS_CLONING = "Clone"
-    STATUS_QUEUEDL = "QueueDl"
-    STATUS_QUEUEUP = "QueueUp"
-    STATUS_PAUSED = "Pause"
-    STATUS_ARCHIVING = "Archive"
-    STATUS_EXTRACTING = "Extract"
-    STATUS_SPLITTING = "Split"
-    STATUS_CHECKING = "CheckUp"
-    STATUS_SEEDING = "Seed"
+    STATUS_UPLOADING = "Uploading...📤"
+    STATUS_DOWNLOADING = "Downloading...📥"
+    STATUS_CLONING = "Cloning...♻️"
+    STATUS_QUEUEDL = "QueueDl..💤"
+    STATUS_QUEUEUP = "QueueUp..💤"
+    STATUS_PAUSED = "Paused...⛔️"
+    STATUS_ARCHIVING = "Archiving...🔐"
+    STATUS_EXTRACTING = "Extracting...📂"
+    STATUS_SPLITTING = "Splitting...✂️"
+    STATUS_CHECKING = "CheckingUp...📝"
+    STATUS_SEEDING = "Seeding...🌧"
 
 SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
@@ -123,12 +123,12 @@ def get_progress_bar_string(processed_bytes, total_bytes):
     p = 0 if total == 0 else round(completed * 100 / total)
     p = min(max(p, 0), 100)
     cFull = p // 8
-    p_str = '■' * cFull
-    p_str += '□' * (12 - cFull)
+    p_str = '▰' * cFull
+    p_str += '▱' * (12 - cFull)
     return p_str
 
 def get_readable_message():
-    msg = ""
+    msg = f"Powered By <b><u><i>Dhruv Mirror Premium</i></u></b>\n"
     button = None
     if STATUS_LIMIT := config_dict['STATUS_LIMIT']:
         tasks = len(download_dict)
@@ -137,7 +137,8 @@ def get_readable_message():
             globals()['COUNT'] -= STATUS_LIMIT
             globals()['PAGE_NO'] -= 1
     for index, download in enumerate(list(download_dict.values())[COUNT:], start=1):
-        msg += f"<b>{download.status()}</b>: <code>{escape(str(download.name()))}</code>"
+        msg += f"\n<b>Name</b> : <code>{escape(str(download.name()))}\n</code>"
+        msg += f"<b>\nStatus : {download.status()}</b>"
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
             msg += f"\n[{get_progress_bar_string(download.processed_bytes(), download.size_raw())}] {download.progress()}"
             msg += f"\n<b>Processed</b>: {get_readable_file_size(download.processed_bytes())} of {download.size()}"
@@ -155,7 +156,7 @@ def get_readable_message():
             msg += f" | <b>Time</b>: {download.seeding_time()}"
         else:
             msg += f"\n<b>Size</b>: {download.size()}"
-        msg += f"\n<b>Source</b>: {download.source}"
+        msg += f"\n<b>Task By : </b>: {download.source}"
         msg += f"\n<b>Elapsed</b>: {get_readable_time(time() - download.startTime)}"
         msg += f"\n<b>Engine</b>: {download.engine}"
         msg += f"\n<b>Upload</b>: {download.mode}"
